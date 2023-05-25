@@ -20,7 +20,7 @@ export type User = {
   url: string;
 };
 
-export type GetUsersResult = {
+export type UserApiResults = {
   incomplete_results: boolean;
   items: User[];
   total_count: number;
