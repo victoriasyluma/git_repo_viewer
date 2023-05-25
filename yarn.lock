@@ -1317,6 +1317,11 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.npmjs.org/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz"
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
 
+json-storage-formatter@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/json-storage-formatter/-/json-storage-formatter-1.0.8.tgz#96e1f9a5a1dc401568fa79ba0d68b3fd0d8e07c7"
+  integrity sha512-/Z+NZM9wKAz/MLZAQpAGEwmbJUolBPq94+FY+esKYlwev2flhr6L8LIOBHh9LilIrSFpfFSyBGG3xfh8gzwZyw==
+
 json5@^2.2.2:
   version "2.2.3"
   resolved "https://registry.npmjs.org/json5/-/json5-2.2.3.tgz"
@@ -1630,10 +1635,24 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
+react-global-state-hooks@^2.0.15:
+  version "2.0.15"
+  resolved "https://registry.yarnpkg.com/react-global-state-hooks/-/react-global-state-hooks-2.0.15.tgz#c58e405aecbc1dd748b348139a2b76b2d7d7d86b"
+  integrity sha512-R79pKkASZJQQsIjMlagJg50KuHsNHveejPgJZRjyVevwycSbto3Aicod1Bn9+f1W4dNMbYavNdLKFm+/+dFMKA==
+  dependencies:
+    react-native-global-state-hooks "^5.0.15"
+
 react-icons@^4.8.0:
   version "4.8.0"
   resolved "https://registry.npmjs.org/react-icons/-/react-icons-4.8.0.tgz"
   integrity sha512-N6+kOLcihDiAnj5Czu637waJqSnwlMNROzVZMhfX68V/9bu9qHaMIJC4UdozWoOk57gahFCNHwVvWzm0MTzRjg==
+
+react-native-global-state-hooks@^5.0.15:
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/react-native-global-state-hooks/-/react-native-global-state-hooks-5.0.15.tgz#7fd8edf5f92104913fd5d8872ea5b40b1f02c7dc"
+  integrity sha512-Ilu1RYPwmCfPwPjnS3/40IILB5VNEXVAAn4Proj6hdCTA6UF9/ge6+DfP+9ybZIKtFNlm2QB+F0PKLV3BI2WcQ==
+  dependencies:
+    json-storage-formatter "^1.0.8"
 
 react-refresh@^0.14.0:
   version "0.14.0"

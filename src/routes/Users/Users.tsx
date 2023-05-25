@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getUsers, User } from '../../shared';
+import { getUsers, User, setSelectedUser } from '../../shared';
 import debounce from 'lodash/debounce';
+import { NavLink } from 'react-router-dom';
 
 export const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -25,6 +26,10 @@ export const Users = () => {
       }, 3000),
     []
   );
+
+  useEffect(() => {
+    setSelectedUser(null);
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -71,9 +76,18 @@ export const Users = () => {
       <ul>
         {!!filter &&
           users.map((user) => {
+            const { id, login } = user;
+
             return (
-              <li className="" key={user.id}>
-                {user.login}
+              <li className="" key={id}>
+                <NavLink
+                  to={`/repositories/${login}`}
+                  onClick={() => {
+                    setSelectedUser(user);
+                  }}
+                >
+                  {login}
+                </NavLink>
               </li>
             );
           })}

@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom';
+import { useSelectedUser } from '../../shared';
 
 export const NavBar = () => {
-  // const selectedUser = useSelectedUser();
+  const [selectedUser] = useSelectedUser();
 
   return (
     <nav className="flex gap-2">
@@ -16,7 +17,8 @@ export const NavBar = () => {
           );
         }}
       </NavLink>
-      <span className="">{'=> Victoria Sulyma'}</span>
+
+      {!!selectedUser && <span className="">{`=> ${selectedUser.login}`}</span>}
     </nav>
   );
 };

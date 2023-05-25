@@ -7,7 +7,7 @@ export const App = () => {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Users />} />
-        <Route path="/repositories" element={<Repositories />} />
+        <Route path="/repositories/:login" element={<Repositories />} />
         <Route path="*" element={<Users />} />
       </Route>
     </Routes>
