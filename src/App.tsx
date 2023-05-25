@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { Layout } from './Layout';
+import { Repositories, Users } from './routes';
 
-import './App.css';
-
-function App() {
-  const [count, setCount] = useState(0);
-
-  return <></>;
-}
+export const App = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Users />} />
+        <Route path="/repositories" element={<Repositories />} />
+        <Route path="*" element={<Users />} />
+      </Route>
+    </Routes>
+  );
+};
 
 export default App;
