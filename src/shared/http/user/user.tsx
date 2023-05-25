@@ -17,8 +17,10 @@ export const getUsers = async ({
   filter: string;
   page: number;
 }): Promise<GetUsersResult> => {
+  const sanitatedFilter = filter.trim().toLocaleLowerCase();
+
   const result = await axios.get<GetUsersResult>(
-    `${BASE}/search/users?q=${filter}&page=${page}&per_page=${PAGE_SIZE}`
+    `${BASE}/search/users?q=${sanitatedFilter}&page=${page}&per_page=${PAGE_SIZE}`
   );
 
   return result.data;

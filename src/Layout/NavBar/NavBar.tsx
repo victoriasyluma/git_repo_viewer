@@ -1,8 +1,10 @@
 import { NavLink } from 'react-router-dom';
 
 export const NavBar = () => {
+  // const selectedUser = useSelectedUser();
+
   return (
-    <nav className=" h-24 flex gap-5 ml-4 items-center">
+    <nav className="flex gap-2">
       <NavLink className="flex text-lg  hover:text-blue-950  " to="/">
         {({ isActive }) => {
           return (
@@ -14,7 +16,7 @@ export const NavBar = () => {
           );
         }}
       </NavLink>
-      <span className=" text-white">{'=> Victoria Sulyma'}</span>
+      <span className="">{'=> Victoria Sulyma'}</span>
     </nav>
   );
 };

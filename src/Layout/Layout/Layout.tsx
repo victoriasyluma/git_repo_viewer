@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 export const Layout = () => {
   return (
     <>
-      <header className=" mb-8 font-default sticky bg-purple-4">
+      <header className="font-default sticky">
         <NavBar />
       </header>
 

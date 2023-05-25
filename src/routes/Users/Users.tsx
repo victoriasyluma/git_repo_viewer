@@ -1,29 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getUsers, User } from '../../shared';
+import debounce from 'lodash/debounce';
 
 export const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [filter, setFilter] = useState('');
+
+  const loadData = useMemo(
+    () =>
+      debounce(async (params: { page: number; filter: string }) => {
+        try {
+          setIsLoading(true);
+
+          const { items, total_count } = await getUsers(params);
+
+          setUsers((current) => [...current, ...items]);
+          setTotal(total_count);
+        } finally {
+          setIsLoading(false);
+        }
+      }, 3000),
+    []
+  );
 
   useEffect(() => {
-    (async () => {
-      try {
-        setIsLoading(true);
+    setPage(1);
+    setTotal(null);
+    setUsers([]);
+  }, [filter]);
 
-        const { items, total_count } = await getUsers({
-          filter: 'victoriasy',
-          page,
-        });
+  useEffect(() => {
+    if (!filter) return;
 
-        setUsers([...users, ...items]);
-        setTotal(total_count);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [page]);
+    loadData({ page, filter });
+  }, [page, filter]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,16 +59,40 @@ export const Users = () => {
   }, [isLoading, total, users.length]);
 
   return (
-    <div className="animate-fadeIn">
-      <p className=" text-3xl">Welcome to the Home page</p>
+    <div className="animate-fadeIn p-4">
+      <input
+        placeholder="Search..."
+        value={filter}
+        onChange={(event) => {
+          setFilter(event.target.value);
+        }}
+      />
+
       <ul>
-        {users.map((user) => {
-          return (
-            <li className="" key={user.id}>
-              {user.login}
-            </li>
-          );
-        })}
+        {!!filter &&
+          users.map((user) => {
+            return (
+              <li className="" key={user.id}>
+                {user.login}
+              </li>
+            );
+          })}
+
+        {!filter && <p className=" text-gray-400">Please add the filter</p>}
+
+        {isLoading && (
+          <li>
+            <div className=" w-10 h-10 border-gray-300 border-4 border-t-transparent rounded-full animate-spin border-dashed"></div>
+          </li>
+        )}
+
+        {total === 0 && (
+          <li>
+            <p className="text-gray-400">
+              The is not result for the current filter
+            </p>
+          </li>
+        )}
       </ul>
     </div>
   );
