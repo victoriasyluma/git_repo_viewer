@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getUsers, User, setSelectedUser } from '../../shared';
+import { getUsers, SearchUser, setSelectedUser } from '../../shared';
 import debounce from 'lodash/debounce';
 import { NavLink } from 'react-router-dom';
 
 export const Users = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<SearchUser[]>([]);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
