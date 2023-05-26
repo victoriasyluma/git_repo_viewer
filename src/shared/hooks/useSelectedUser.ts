@@ -1,5 +1,5 @@
 import { createGlobalStateWithDecoupledFuncs } from 'react-global-state-hooks';
-import { SearchUser } from '..';
+import { User } from '..';
 
 export const [useSelectedUser, getSelectedUser, setSelectedUser] =
-  createGlobalStateWithDecoupledFuncs<SearchUser | null>(null);
+  createGlobalStateWithDecoupledFuncs<User | null>(null);

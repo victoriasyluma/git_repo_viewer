@@ -1,25 +1,25 @@
 import axios from 'axios';
-import { SearchUser, PaginatedResult, Repository } from '.';
+import { UserMeta, PaginatedResult, Repository, User } from '.';
 
 const BASE = 'https://api.github.com';
 const PAGE_SIZE = 30;
 
 export const getUserRepositories = async ({
-  login,
+  user,
   page,
 }: {
-  login: string;
   page: number;
-}): Promise<PaginatedResult<Repository>> => {
-  const result = await axios.get<PaginatedResult<Repository>>(
-    `${BASE}/users/${login}/repos?page=${2}&per_page=${PAGE_SIZE}`
+  user: User;
+}): Promise<Repository[]> => {
+  const result = await axios.get<Repository[]>(
+    `${BASE}/users/${user.login}/repos?page=${page}`
   );
 
   return result.data;
 };
 
 export const getUser = async (login: string) => {
-  const result = await axios.get<SearchUser>(`${BASE}/users/${login}`);
+  const result = await axios.get<User>(`${BASE}/users/${login}`);
 
   return result.data;
 };
@@ -33,7 +33,7 @@ export const getUsers = async ({
 }) => {
   const sanitatedFilter = filter.trim().toLocaleLowerCase();
 
-  const result = await axios.get<PaginatedResult<SearchUser>>(
+  const result = await axios.get<PaginatedResult<UserMeta>>(
     `${BASE}/search/users?q=${sanitatedFilter}&page=${page}&per_page=${PAGE_SIZE}`
   );
 

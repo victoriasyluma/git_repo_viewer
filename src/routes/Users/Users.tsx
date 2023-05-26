@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getUsers, SearchUser, setSelectedUser } from '../../shared';
+import { getUsers, UserMeta, setSelectedUser } from '../../shared';
 import debounce from 'lodash/debounce';
 import { NavLink } from 'react-router-dom';
 
 export const Users = () => {
-  const [users, setUsers] = useState<SearchUser[]>([]);
+  const [users, setUsers] = useState<UserMeta[]>([]);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -12,6 +12,9 @@ export const Users = () => {
 
   const loadData = useMemo(
     () =>
+      /**
+       * we debounce this to avoid too many calls when the filter change
+       */
       debounce(async (params: { page: number; filter: string }) => {
         try {
           setIsLoading(true);
@@ -23,7 +26,7 @@ export const Users = () => {
         } finally {
           setIsLoading(false);
         }
-      }, 3000),
+      }, 500),
     []
   );
 
@@ -44,17 +47,19 @@ export const Users = () => {
   }, [page, filter]);
 
   useEffect(() => {
-    const handleScroll = () => {
+    if (isLoading || total === null) return;
+
+    const handleScroll = debounce(() => {
       const { scrollTop, clientHeight, scrollHeight } =
         document.documentElement;
 
       const isBottomReached = scrollTop + clientHeight >= scrollHeight - 10;
-      const shouldLoadMore = total !== null && total > users.length;
+      const shouldLoadMore = total > users.length;
 
-      if (!isBottomReached || isLoading || !shouldLoadMore) return;
+      if (!isBottomReached || !shouldLoadMore) return;
 
       setPage((prevPage) => prevPage + 1);
-    };
+    }, 100);
 
     globalThis.addEventListener('scroll', handleScroll);
 
@@ -80,14 +85,7 @@ export const Users = () => {
 
             return (
               <li className="" key={id}>
-                <NavLink
-                  to={`/repositories/${login}`}
-                  onClick={() => {
-                    setSelectedUser(user);
-                  }}
-                >
-                  {login}
-                </NavLink>
+                <NavLink to={`/repositories/${login}`}>{login}</NavLink>
               </li>
             );
           })}

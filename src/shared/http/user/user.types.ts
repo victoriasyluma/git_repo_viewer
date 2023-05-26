@@ -4,7 +4,7 @@ export type PaginatedResult<Item> = {
   total_count: number;
 };
 
-export type SearchUser = {
+export type UserMeta = {
   avatar_url: string;
   events_url: string;
   followers_url: string;

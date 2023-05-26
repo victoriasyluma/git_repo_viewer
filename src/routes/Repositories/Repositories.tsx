@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import debounce from 'lodash/debounce';
 import { useParams } from 'react-router-dom';
 import {
   getUserRepositories,
   getUser,
   useSelectedUser,
   Repository,
+  User,
 } from '../../shared';
+import { isNil } from 'react-global-state-hooks';
 
 export const Repositories = () => {
   const { login } = useParams<{ login: string }>();
@@ -15,44 +18,60 @@ export const Repositories = () => {
   const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
-    // get current user
     (async () => {
+      const user = await getUser(login);
+
+      setSelectedUser(user);
+    })();
+  }, []);
+
+  const loadData = useMemo(
+    () => async (params: { page: number; user: User }) => {
       try {
-        const getUserPromise = selectedUser
-          ? Promise.resolve(selectedUser)
-          : getUser(login as string);
+        setIsLoading(true);
 
-        const getUserRepositoriesPromise = getUserRepositories({
-          login: login as string,
-          page: 1,
-        });
+        const repositories = await getUserRepositories(params);
 
-        const [user, { items: repositories }] = await Promise.all([
-          getUserPromise,
-          getUserRepositoriesPromise,
-        ]);
-
-        if (!selectedUser) {
-          setSelectedUser(user);
-        }
-
-        // set the repositories
         setRepositories((current) => [...current, ...repositories]);
       } finally {
         setIsLoading(false);
       }
-    })();
-  }, []);
+    },
+    []
+  );
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    loadData({ page, user: selectedUser });
+  }, [page, selectedUser]);
+
+  useEffect(() => {
+    if (isNil(selectedUser?.public_repos) || isLoading) return;
+
+    const handleScroll = debounce(() => {
+      const { scrollTop, clientHeight, scrollHeight } =
+        document.documentElement;
+
+      const isBottomReached = scrollTop + clientHeight >= scrollHeight - 10;
+      const shouldLoadMore = selectedUser?.public_repos > repositories.length;
+
+      if (!isBottomReached || !shouldLoadMore) return;
+
+      setPage((prevPage) => prevPage + 1);
+    }, 100);
+
+    globalThis.addEventListener('scroll', handleScroll);
+
+    return () => {
+      globalThis.removeEventListener('scroll', handleScroll);
+    };
+  }, [isLoading, selectedUser?.public_repos, repositories.length]);
+
   return (
     <div>
       <ul>
         {repositories.map((repo) => {
           return (
-            <li key={repo.id}>
+            <li className="h-9 " key={repo.id}>
               <h1>{repo.name}</h1>
             </li>
           );
