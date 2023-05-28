@@ -78,6 +78,7 @@ export const Users = () => {
         <FiSearch className=" text-gray-300 absolute left-48 bottom-3" />
 
         <input
+          data-testid="filter-input"
           className="bg-slate-50 rounded-md p-2 pr-10 border"
           placeholder="Search..."
           value={filter}
@@ -127,7 +128,11 @@ export const Users = () => {
             );
           })}
 
-        {!filter && <p className=" text-gray-400">Please add the filter</p>}
+        {!filter && (
+          <p data-testid="add-filter-placeholder" className=" text-gray-400">
+            Please add the filter
+          </p>
+        )}
 
         {total === 0 && (
           <li>
@@ -139,7 +144,7 @@ export const Users = () => {
       </ul>
 
       {isLoading && (
-        <div className="flex justify-center my-6">
+        <div data-testid="is-loading" className="flex justify-center my-6">
           <div className="w-10 h-10 border-gray-300 border-4 border-t-transparent rounded-full animate-spin border-dashed"></div>
         </div>
       )}
