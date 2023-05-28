@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import debounce from 'lodash/debounce';
 import { useParams } from 'react-router-dom';
 import {
@@ -6,9 +6,11 @@ import {
   getUser,
   useSelectedUser,
   Repository,
-  User,
 } from '../../shared';
 import { isNil } from 'react-global-state-hooks';
+import { HiOutlineStar } from 'react-icons/hi2';
+import { BiGitRepoForked } from 'react-icons/bi';
+import { getShortDateFormat } from '../../shared/utils';
 
 export const Repositories = () => {
   const { login } = useParams<{ login: string }>();
@@ -30,11 +32,14 @@ export const Repositories = () => {
   }, []);
 
   const loadData = useMemo(
-    () => async (params: { page: number; user: User }) => {
+    () => async (params: { page: number }) => {
       try {
         setIsLoading(true);
 
-        const repositories = await getUserRepositories(params);
+        const repositories = await getUserRepositories({
+          ...params,
+          login,
+        });
 
         setRepositories((current) => [...current, ...repositories]);
       } finally {
@@ -45,8 +50,8 @@ export const Repositories = () => {
   );
 
   useEffect(() => {
-    loadData({ page, user: selectedUser });
-  }, [page, selectedUser]);
+    loadData({ page });
+  }, [page]);
 
   useEffect(() => {
     if (isNil(selectedUser?.public_repos) || isLoading) return;
@@ -71,16 +76,51 @@ export const Repositories = () => {
   }, [isLoading, selectedUser?.public_repos, repositories.length]);
 
   return (
-    <div>
-      <ul>
+    <div className="animate-fadeIn p-4">
+      <ul className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-1 gap-5">
         {repositories.map((repo) => {
           return (
-            <li className="h-9 " key={repo.id}>
-              <h1>{repo.name}</h1>
+            <li
+              className=" rounded-md gap-3 p-3 flex flex-col border border-gray-200"
+              key={repo.id}
+            >
+              <a href={repo.svn_url}>
+                <h2 className="text-blue-400 text-lg hover:underline focus:underline">
+                  {repo.name}
+                </h2>
+              </a>
+
+              <p className=" font-thin">{repo.description}</p>
+
+              <ul className="flex gap-3">
+                {!!repo.language && <li className="">{repo.language}</li>}
+
+                {!!repo.watchers && (
+                  <li className="flex items-center gap-1">
+                    <HiOutlineStar />
+                    {repo.watchers}
+                  </li>
+                )}
+
+                {!!repo.forks_count && (
+                  <li className="flex items-center gap-1">
+                    <BiGitRepoForked />
+                    {repo.forks_count}
+                  </li>
+                )}
+
+                <li className="">{getShortDateFormat(repo.updated_at)}</li>
+              </ul>
             </li>
           );
         })}
       </ul>
+
+      {isLoading && (
+        <div className="flex justify-center my-6">
+          <div className="w-10 h-10 border-gray-300 border-4 border-t-transparent rounded-full animate-spin border-dashed"></div>
+        </div>
+      )}
     </div>
   );
 };

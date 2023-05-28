@@ -5,14 +5,14 @@ const BASE = 'https://api.github.com';
 const PAGE_SIZE = 30;
 
 export const getUserRepositories = async ({
-  user,
+  login,
   page,
 }: {
   page: number;
-  user: User;
+  login: string;
 }): Promise<Repository[]> => {
   const result = await axios.get<Repository[]>(
-    `${BASE}/users/${user.login}/repos?page=${page}`
+    `${BASE}/users/${login}/repos?page=${page}`
   );
 
   return result.data;

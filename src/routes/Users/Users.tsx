@@ -3,13 +3,20 @@ import { getUsers, UserMeta } from '../../shared';
 import debounce from 'lodash/debounce';
 import { NavLink } from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
+import { useSearchParams } from 'react-router-dom';
+import { AiOutlineClose } from 'react-icons/ai';
 
 export const Users = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [users, setUsers] = useState<UserMeta[]>([]);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState(() => {
+    const filter = searchParams.get('_');
+
+    return filter ?? '';
+  });
 
   const loadData = useMemo(
     () =>
@@ -66,17 +73,33 @@ export const Users = () => {
   }, [isLoading, total, users.length]);
 
   return (
-    <div className="animate-fadeIn p-4">
-      <div className=" relative mb-3">
+    <div className="animate-fadeIn p-4 flex flex-col gap-6">
+      <div className=" relative mb-3 flex gap-3">
         <FiSearch className=" text-gray-300 absolute left-48 bottom-3" />
+
         <input
           className="bg-slate-50 rounded-md p-2 pr-10 border"
           placeholder="Search..."
           value={filter}
           onChange={(event) => {
-            setFilter(event.target.value);
+            const { value } = event.target;
+
+            setFilter(value);
+            setSearchParams({ _: value });
           }}
         />
+
+        {!!filter && (
+          <button
+            onClick={() => {
+              setFilter('');
+              setSearchParams({ _: '' });
+            }}
+            className="cursor-pointer text-xs text-blue-400 flex items-center gap-1"
+          >
+            <AiOutlineClose /> Clean
+          </button>
+        )}
       </div>
 
       <ul className=" grid grid-cols-1 md:grid-cols-2 sm:grid-cols-1 gap-5">
@@ -86,7 +109,7 @@ export const Users = () => {
 
             return (
               <li
-                className=" rounded-md gap-3 items-center p-3 text-white h-20 flex border border-gray-300 "
+                className=" rounded-md gap-3 items-center p-3 text-white h-20 flex border border-gray-200 "
                 key={id}
               >
                 <img
@@ -106,12 +129,6 @@ export const Users = () => {
 
         {!filter && <p className=" text-gray-400">Please add the filter</p>}
 
-        {isLoading && (
-          <li className="flex justify-center col-span-2">
-            <div className="w-10 h-10 border-gray-300 border-4 border-t-transparent rounded-full animate-spin border-dashed"></div>
-          </li>
-        )}
-
         {total === 0 && (
           <li>
             <p className="text-gray-400">
@@ -120,6 +137,12 @@ export const Users = () => {
           </li>
         )}
       </ul>
+
+      {isLoading && (
+        <div className="flex justify-center my-6">
+          <div className="w-10 h-10 border-gray-300 border-4 border-t-transparent rounded-full animate-spin border-dashed"></div>
+        </div>
+      )}
     </div>
   );
 };
