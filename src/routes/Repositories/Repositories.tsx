@@ -23,6 +23,10 @@ export const Repositories = () => {
 
       setSelectedUser(user);
     })();
+
+    return () => {
+      setSelectedUser(null);
+    };
   }, []);
 
   const loadData = useMemo(

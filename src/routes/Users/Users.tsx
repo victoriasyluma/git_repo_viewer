@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getUsers, UserMeta, setSelectedUser } from '../../shared';
+import { getUsers, UserMeta } from '../../shared';
 import debounce from 'lodash/debounce';
 import { NavLink } from 'react-router-dom';
+import { FiSearch } from 'react-icons/fi';
 
 export const Users = () => {
   const [users, setUsers] = useState<UserMeta[]>([]);
@@ -29,10 +30,6 @@ export const Users = () => {
       }, 500),
     []
   );
-
-  useEffect(() => {
-    setSelectedUser(null);
-  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -70,22 +67,39 @@ export const Users = () => {
 
   return (
     <div className="animate-fadeIn p-4">
-      <input
-        placeholder="Search..."
-        value={filter}
-        onChange={(event) => {
-          setFilter(event.target.value);
-        }}
-      />
+      <div className=" relative mb-3">
+        <FiSearch className=" text-gray-300 absolute left-48 bottom-3" />
+        <input
+          className="bg-slate-50 rounded-md p-2 pr-10 border"
+          placeholder="Search..."
+          value={filter}
+          onChange={(event) => {
+            setFilter(event.target.value);
+          }}
+        />
+      </div>
 
-      <ul>
+      <ul className=" grid grid-cols-1 md:grid-cols-2 sm:grid-cols-1 gap-5">
         {!!filter &&
           users.map((user) => {
-            const { id, login } = user;
+            const { id, login, avatar_url } = user;
 
             return (
-              <li className="" key={id}>
-                <NavLink to={`/repositories/${login}`}>{login}</NavLink>
+              <li
+                className=" rounded-md gap-3 items-center p-3 text-white h-20 flex border border-gray-300 "
+                key={id}
+              >
+                <img
+                  className=" h-14 w-14 rounded-full"
+                  src={avatar_url}
+                  alt="Avatar of the user"
+                />
+                <NavLink
+                  className=" text-blue-900"
+                  to={`/repositories/${login}`}
+                >
+                  {login}
+                </NavLink>
               </li>
             );
           })}
@@ -93,8 +107,8 @@ export const Users = () => {
         {!filter && <p className=" text-gray-400">Please add the filter</p>}
 
         {isLoading && (
-          <li>
-            <div className=" w-10 h-10 border-gray-300 border-4 border-t-transparent rounded-full animate-spin border-dashed"></div>
+          <li className="flex justify-center col-span-2">
+            <div className="w-10 h-10 border-gray-300 border-4 border-t-transparent rounded-full animate-spin border-dashed"></div>
           </li>
         )}
 
